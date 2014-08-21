@@ -47,6 +47,10 @@ cache =
 
 app = http.createServer (req, res) ->
   [channel] = (x for x in req.url.split '/' when x.length > 0)
+  if not channel?
+    res.writeHead 302,
+      Location: "https://github.com/iameli/minecraft-latest"
+    res.end()
   getVersions().then (versions) ->
     if versions.latest[channel]
       res.writeHead 302,
