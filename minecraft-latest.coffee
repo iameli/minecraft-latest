@@ -40,11 +40,6 @@ getVersions = ->
         deferred.resolve versions
   return deferred.promise
 
-cache = 
-  versions: null
-  lastAttempt: new Date(0)
-
-
 app = http.createServer (req, res) ->
   [channel] = (x for x in req.url.split '/' when x.length > 0)
   if not channel?
