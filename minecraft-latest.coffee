@@ -5,7 +5,8 @@
 # spamming me I'm only going to hit mojang's version.json once every five seconds.
 #
 
-VERSIONS_URL = 'https://s3.amazonaws.com/Minecraft.Download/versions/versions.json'
+BASE_URL = 'https://s3.amazonaws.com/Minecraft.Download/versions'
+VERSIONS_URL = "#{BASE_URL}/versions.json"
 REQUEST_INTERVAL = 5000
 
 http = require 'http'
@@ -17,6 +18,8 @@ cache =
   lastAttempt: (new Date 0).getTime()
 
 currentRequest = null
+
+serverUrl = (version) -> "#{BASE_URL}/#{version}/minecraft_server.#{version}.jar"
 
 getVersions = ->
   deferred = q.defer()
@@ -46,8 +49,8 @@ app = http.createServer (req, res) ->
   [channel] = (x for x in req.url.split '/' when x.length > 0)
   getVersions().then (versions) ->
     if versions.latest[channel]
-      res.writeHead 200
-      res.write versions.latest[channel]
+      res.writeHead 302,
+        Location: serverUrl versions.latest[channel]
       res.end()
     else
       res.writeHead 404
